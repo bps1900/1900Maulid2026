@@ -108,16 +108,36 @@ function showView(name) {
   view[name].classList.remove('hidden');
 }
 
+// ---------- HELPER LOADING ----------
+// Nyalain/matiin kondisi "loading" pada sebuah tombol: teks diganti,
+// tombol dan sanak-saudaranya dikunci, dikasih class 'is-loading' buat CSS.
+function setBtnLoading(btnEl, loadingText) {
+  btnEl.dataset.originalText = btnEl.textContent;
+  btnEl.textContent = loadingText;
+  btnEl.classList.add('is-loading');
+}
+function clearBtnLoading(btnEl) {
+  if (btnEl.dataset.originalText !== undefined) {
+    btnEl.textContent = btnEl.dataset.originalText;
+    delete btnEl.dataset.originalText;
+  }
+  btnEl.classList.remove('is-loading');
+}
+
 // ---------- LOGIN ----------
 document.getElementById('btn-login').addEventListener('click', async () => {
   const nip5 = document.getElementById('input-nip').value.trim();
   const errorEl = document.getElementById('login-error');
+  const btnLogin = document.getElementById('btn-login');
   errorEl.textContent = '';
 
   if (nip5.length !== 5) {
     errorEl.textContent = 'Masukkan tepat 5 digit NIP.';
     return;
   }
+
+  btnLogin.disabled = true;
+  setBtnLoading(btnLogin, '⏳ Memeriksa...');
 
   try {
     const data = await apiPost('login', { nip5 });
@@ -136,17 +156,21 @@ document.getElementById('btn-login').addEventListener('click', async () => {
     showView('alias');
   } catch (err) {
     errorEl.textContent = 'Tidak bisa terhubung ke server.';
+  } finally {
+    btnLogin.disabled = false;
+    clearBtnLoading(btnLogin);
   }
 });
 
-document.getElementById('btn-show-leaderboard').addEventListener('click', loadLeaderboard);
+document.getElementById('btn-show-leaderboard').addEventListener('click', (e) => loadLeaderboard(e.currentTarget));
 document.getElementById('btn-back-home').addEventListener('click', () => showView('login'));
-document.getElementById('btn-to-leaderboard').addEventListener('click', loadLeaderboard);
+document.getElementById('btn-to-leaderboard').addEventListener('click', (e) => loadLeaderboard(e.currentTarget));
 
 // ---------- ALIAS ----------
 document.getElementById('btn-start-quiz').addEventListener('click', async () => {
   const alias = document.getElementById('input-alias').value.trim();
   const errorEl = document.getElementById('alias-error');
+  const btnStart = document.getElementById('btn-start-quiz');
 
   if (!alias) {
     errorEl.textContent = 'Nama samaran tidak boleh kosong.';
@@ -158,7 +182,15 @@ document.getElementById('btn-start-quiz').addEventListener('click', async () => 
   }
 
   state.alias = alias;
-  await startQuiz();
+
+  btnStart.disabled = true;
+  setBtnLoading(btnStart, '⏳ Menyiapkan soal...');
+  try {
+    await startQuiz();
+  } finally {
+    btnStart.disabled = false;
+    clearBtnLoading(btnStart);
+  }
 });
 
 // ---------- QUIZ ----------
@@ -199,6 +231,7 @@ function renderSoal() {
   container.innerHTML = html;
 
   const btnNext = document.getElementById('btn-next');
+  clearBtnLoading(btnNext);
 
   if (sudahDicek) {
     // Soal ini sudah dijawab sebelumnya (misal user balik pakai next lalu balik lagi) - tampilkan hasil, kunci pilihan
@@ -218,8 +251,11 @@ async function selectJawaban(soal, btnEl) {
   const container = document.getElementById('soal-container');
   const nilaiPilihan = btnEl.dataset.value;
 
-  // Kunci semua tombol dulu supaya tidak bisa diklik dobel selama nunggu server
+  // Kunci semua tombol dulu supaya tidak bisa diklik dobel selama nunggu server,
+  // dan kasih tanda loading khusus di tombol yang diklik biar user tau ini lagi diproses.
   container.querySelectorAll('.opsi-btn').forEach(b => (b.disabled = true));
+  container.classList.add('checking');
+  setBtnLoading(btnEl, '⏳ Mengecek...');
 
   state.jawaban[soal.id] = nilaiPilihan;
 
@@ -229,6 +265,9 @@ async function selectJawaban(soal, btnEl) {
   } catch (err) {
     hasil = null;
   }
+
+  container.classList.remove('checking');
+  clearBtnLoading(btnEl);
 
   if (!hasil || hasil.error) {
     // Kalau gagal cek ke server, tetap lanjut tanpa efek supaya kuis tidak macet
@@ -259,12 +298,23 @@ function applyFeedbackStyle(container, soal, jawabanUser, hasil) {
   });
 }
 
-document.getElementById('btn-next').addEventListener('click', async () => {
+document.getElementById('btn-next').addEventListener('click', async (e) => {
+  const btnNext = e.currentTarget;
+
   if (state.idx < state.soal.length - 1) {
     state.idx += 1;
     renderSoal();
   } else {
-    await submitQuiz();
+    btnNext.disabled = true;
+    setBtnLoading(btnNext, '⏳ Mengirim hasil...');
+    try {
+      await submitQuiz();
+    } finally {
+      // Kalau submitQuiz sukses, view sudah pindah ke 'result' jadi ini tidak kelihatan.
+      // Kalau gagal (mis. error alert), kembalikan tombol seperti semula.
+      btnNext.disabled = false;
+      clearBtnLoading(btnNext);
+    }
   }
 });
 
@@ -288,21 +338,33 @@ async function submitQuiz() {
 }
 
 // ---------- LEADERBOARD ----------
-async function loadLeaderboard() {
-  const data = await apiGet('leaderboard');
-  const tbody = document.getElementById('leaderboard-body');
-  tbody.innerHTML = '';
+async function loadLeaderboard(triggerBtn) {
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    setBtnLoading(triggerBtn, '⏳ Memuat...');
+  }
 
-  data.leaderboard.forEach((row, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${i + 1}</td>
-      <td>${row.alias}</td>
-      <td>${row.nilai}/${row.totalSoal}</td>
-      <td>${row.durasiDetik}s</td>
-    `;
-    tbody.appendChild(tr);
-  });
+  try {
+    const data = await apiGet('leaderboard');
+    const tbody = document.getElementById('leaderboard-body');
+    tbody.innerHTML = '';
 
-  showView('leaderboard');
+    data.leaderboard.forEach((row, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${row.alias}</td>
+        <td>${row.nilai}/${row.totalSoal}</td>
+        <td>${row.durasiDetik}s</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    showView('leaderboard');
+  } finally {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      clearBtnLoading(triggerBtn);
+    }
+  }
 }

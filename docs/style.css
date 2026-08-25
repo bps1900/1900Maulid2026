@@ -150,3 +150,12 @@ tbody tr:first-child { background: #fff8e1; font-weight: 700; }
   .login-title { font-size: 0.9rem; }
   .logo-img { width: 65%; max-width: 150px; }
 }
+
+/* ---------- Efek visual saat loading/nunggu server ---------- */
+button.is-loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+#soal-container.checking .opsi-btn:not(.is-loading) {
+  opacity: 0.5;
+}

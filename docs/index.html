@@ -14,7 +14,7 @@
   <section id="view-login" class="card">
     <img src="images/logo.png" alt="Logo" class="logo-img">
     <h1 class="login-title">Kuis Memperingati Maulid Nabi Muhammad SAW<br>Tahun 2026</h1>
-    <p>Masukkan 5 digit terakhir NIP kamu untuk mulai.</p>
+    <p>Masukkan 5 digit terakhir NIP bagi pegawai dan NIM untuk Mahasiswa Magang.</p>
     <input id="input-nip" type="text" inputmode="numeric" maxlength="5" placeholder="Contoh: 12345">
     <button id="btn-login">Mulai Kuis</button>
     <p id="login-error" class="error"></p>
@@ -25,7 +25,7 @@
   <!-- ALIAS -->
   <section id="view-alias" class="card hidden">
     <h1>👤 Nama Samaran</h1>
-    <p>Halo, <b id="alias-nama-asli"></b>! Masukkan nama samaran/alias yang akan tampil di leaderboard.</p>
+    <p>Halo, <b id="alias-nama-asli"></b>. Masukkan nama samaran/alias yang akan tampil di leaderboard.</p>
     <input id="input-alias" type="text" maxlength="30" placeholder="Contoh: Elang Malam">
     <button id="btn-start-quiz">Mulai Kuis</button>
     <p id="alias-error" class="error"></p>
@@ -45,7 +45,7 @@
 
   <!-- RESULT -->
   <section id="view-result" class="card hidden">
-    <h2>🎉 Kuis Selesai!</h2>
+    <h2>🎉 Kuis Selesai</h2>
     <p>Nilai kamu:</p>
     <div id="result-score" class="score"></div>
     <p id="result-durasi"></p>
@@ -54,6 +54,8 @@
 
   <!-- LEADERBOARD -->
   <section id="view-leaderboard" class="card hidden">
+    <img src="images/logo.png" alt="Logo" class="logo-img">
+    <h1 class="login-title">Kuis Memperingati Maulid Nabi Muhammad SAW<br>Tahun 2026</h1>
     <h2>🏆 Leaderboard</h2>
     <table id="leaderboard-table">
       <thead>
