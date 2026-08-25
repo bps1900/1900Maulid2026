@@ -1,0 +1,152 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #0f5132, #146c43);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.container { width: 100%; max-width: 480px; }
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.hidden { display: none; }
+h1 { margin-top: 0; font-size: 1.25rem; color: #0f5132; text-align: center; line-height: 1.4; }
+.login-title { font-size: 1.05rem; white-space: normal; }
+.logo-img {
+  display: block;
+  width: 55%;
+  max-width: 240px;
+  height: auto;
+  margin: 0 auto 16px;
+}
+h2 { color: #0f5132; }
+p { color: #444; line-height: 1.5; }
+input[type=text] {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.3rem;
+  text-align: center;
+  letter-spacing: 4px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: #0f5132;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 8px;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.secondary { background: #e9ecef; color: #333; }
+.error { color: #c0392b; font-weight: 600; min-height: 20px; }
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+.soal-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; color: #222; }
+.opsi-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.opsi-btn.selected { border-color: #0f5132; background: #eafaf1; font-weight: 600; }
+.opsi-btn:disabled { cursor: not-allowed; opacity: 1; }
+.opsi-btn.correct {
+  border-color: #1e7e34;
+  background: #28a745;
+  color: #fff;
+  font-weight: 700;
+  animation: flash-correct 0.4s ease;
+}
+.opsi-btn.incorrect {
+  border-color: #a71d2a;
+  background: #dc3545;
+  color: #fff;
+  font-weight: 700;
+  animation: flash-incorrect 0.4s ease;
+}
+.opsi-btn.reveal-correct {
+  border-color: #1e7e34;
+  background: #eafaf1;
+  color: #1e7e34;
+  font-weight: 700;
+}
+@keyframes flash-correct {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+@keyframes flash-incorrect {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.quiz-header { align-items: center; }
+.btn-mute-float {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  background: #ffffffdd;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.score { font-size: 3rem; font-weight: 800; color: #0f5132; text-align: center; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+tbody tr:first-child { background: #fff8e1; font-weight: 700; }
+
+/* ---------- RESPONSIVE (HP / layar sempit) ---------- */
+@media (max-width: 480px) {
+  body { padding: 12px; align-items: flex-start; padding-top: 56px; }
+  .card { padding: 22px 18px; border-radius: 14px; }
+  .logo-img { width: 60%; max-width: 180px; margin-bottom: 12px; }
+  h1 { font-size: 1.15rem; }
+  .login-title { font-size: 1rem; }
+  p { font-size: 0.9rem; }
+  input[type=text] { padding: 12px; font-size: 1.15rem; letter-spacing: 3px; }
+  button { padding: 12px; font-size: 0.95rem; }
+  .soal-text { font-size: 1rem; }
+  .opsi-btn { padding: 10px 14px; font-size: 0.9rem; }
+  .score { font-size: 2.4rem; }
+  th, td { padding: 8px 6px; font-size: 0.8rem; }
+  .btn-mute-float { top: 10px; right: 10px; width: 38px; height: 38px; font-size: 1.05rem; }
+}
+
+@media (max-width: 360px) {
+  .card { padding: 18px 14px; }
+  .login-title { font-size: 0.9rem; }
+  .logo-img { width: 65%; max-width: 150px; }
+}

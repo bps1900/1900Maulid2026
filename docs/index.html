@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Maulid Nabi</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<button id="btn-mute" class="btn-mute-float" title="Mute/Unmute musik">🔊</button>
+<div id="app" class="container">
+
+  <!-- LOGIN -->
+  <section id="view-login" class="card">
+    <img src="images/logo.png" alt="Logo" class="logo-img">
+    <h1 class="login-title">Kuis Memperingati Maulid Nabi Muhammad SAW<br>Tahun 2026</h1>
+    <p>Masukkan 5 digit terakhir NIP kamu untuk mulai.</p>
+    <input id="input-nip" type="text" inputmode="numeric" maxlength="5" placeholder="Contoh: 12345">
+    <button id="btn-login">Mulai Kuis</button>
+    <p id="login-error" class="error"></p>
+    <hr>
+    <button id="btn-show-leaderboard" class="secondary">Lihat Leaderboard</button>
+  </section>
+
+  <!-- ALIAS -->
+  <section id="view-alias" class="card hidden">
+    <h1>👤 Nama Samaran</h1>
+    <p>Halo, <b id="alias-nama-asli"></b>! Masukkan nama samaran/alias yang akan tampil di leaderboard.</p>
+    <input id="input-alias" type="text" maxlength="30" placeholder="Contoh: Elang Malam">
+    <button id="btn-start-quiz">Mulai Kuis</button>
+    <p id="alias-error" class="error"></p>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="view-quiz" class="card hidden">
+    <div class="quiz-header">
+      <span id="quiz-progress">Soal 1 / 40</span>
+      <span id="quiz-nama"></span>
+    </div>
+    <div id="soal-container"></div>
+    <button id="btn-next" disabled>Selanjutnya</button>
+  </section>
+
+  <audio id="bg-music" src="audio/soundtrack.mp3" loop preload="auto"></audio>
+
+  <!-- RESULT -->
+  <section id="view-result" class="card hidden">
+    <h2>🎉 Kuis Selesai!</h2>
+    <p>Nilai kamu:</p>
+    <div id="result-score" class="score"></div>
+    <p id="result-durasi"></p>
+    <button id="btn-to-leaderboard">Lihat Leaderboard</button>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section id="view-leaderboard" class="card hidden">
+    <h2>🏆 Leaderboard</h2>
+    <table id="leaderboard-table">
+      <thead>
+        <tr><th>#</th><th>Nama</th><th>Nilai</th><th>Waktu</th></tr>
+      </thead>
+      <tbody id="leaderboard-body"></tbody>
+    </table>
+    <button id="btn-back-home" class="secondary">Kembali</button>
+  </section>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
