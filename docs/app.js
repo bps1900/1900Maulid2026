@@ -1,8 +1,8 @@
-// GANTI URL DI BAWAH INI dengan URL Web App hasil deploy Google Apps Script kamu
-// (Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone)
+// Kuis
+// Maulid
 const API = 'https://script.google.com/macros/s/AKfycbx8eCQYmP1lBnSEevtKl4CHGO3Pqkppnl0ECtwcsWmkOJmZLPBKzw28WQ9U24szPMZBSg/exec';
 
-// Helper: GET pakai query string action, POST pakai text/plain (hindari CORS preflight)
+// Kuis Maulid
 async function apiGet(action) {
   const res = await fetch(`${API}?action=${action}`);
   return res.json();
