@@ -87,7 +87,6 @@ window.addEventListener('DOMContentLoaded', playBgMusic);
 
 const view = {
   login: document.getElementById('view-login'),
-  alias: document.getElementById('view-alias'),
   quiz: document.getElementById('view-quiz'),
   result: document.getElementById('view-result'),
   leaderboard: document.getElementById('view-leaderboard'),

@@ -37,9 +37,9 @@ p { color: #444; line-height: 1.35; font-size: 0.85rem; margin: 0 0 8px; }
 input[type=text] {
   width: 100%;
   padding: 10px;
-  font-size: 1.05rem;
+  font-size: 0.85rem;
   text-align: center;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   border: 2px solid #ccc;
   border-radius: 10px;
   margin-bottom: 10px;
@@ -131,7 +131,7 @@ tbody tr:first-child { background: #fff8e1; font-weight: 700; }
   h1 { font-size: 1.15rem; }
   .login-title { font-size: 1rem; }
   p { font-size: 0.8rem; }
-  input[type=text] { padding: 9px; font-size: 0.95rem; letter-spacing: 2px; }
+  input[type=text] { padding: 9px; font-size: 0.8rem; letter-spacing: 1px; }
   button { padding: 10px; font-size: 0.85rem; }
   .soal-text { font-size: 0.95rem; }
   .opsi-btn { padding: 9px 12px; font-size: 0.85rem; }
