@@ -24,8 +24,45 @@ let state = {
   idx: 0,
   jawaban: {},
   terjawab: {}, // soalId -> { benar } hasil cek server (kunci jawaban TIDAK dikirim ke client)
-  waktuMulai: null,
+  // ---- timer (hanya menghitung waktu efektif peserta melihat/menjawab soal) ----
+  activeMs: 0,       // total waktu yang sudah terkumpul (saat timer sedang di-pause)
+  timerStart: null,  // timestamp saat timer terakhir kali dijalankan (null = sedang pause)
+  timerIntervalId: null,
 };
+
+// ---------- TIMER (dijeda otomatis selama nunggu server, biar fair) ----------
+function startTimer() {
+  state.activeMs = 0;
+  state.timerStart = Date.now();
+  updateTimerDisplay();
+  if (state.timerIntervalId) clearInterval(state.timerIntervalId);
+  state.timerIntervalId = setInterval(updateTimerDisplay, 250);
+}
+function pauseTimer() {
+  if (state.timerStart !== null) {
+    state.activeMs += Date.now() - state.timerStart;
+    state.timerStart = null;
+  }
+}
+function resumeTimer() {
+  if (state.timerStart === null) {
+    state.timerStart = Date.now();
+  }
+}
+function stopTimer() {
+  pauseTimer();
+  if (state.timerIntervalId) {
+    clearInterval(state.timerIntervalId);
+    state.timerIntervalId = null;
+  }
+}
+function getElapsedMs() {
+  return state.activeMs + (state.timerStart !== null ? Date.now() - state.timerStart : 0);
+}
+function updateTimerDisplay() {
+  const el = document.getElementById('quiz-timer');
+  if (el) el.textContent = `⏱ ${Math.floor(getElapsedMs() / 1000)}s`;
+}
 
 // ---------- MUSIK LATAR ----------
 // Musik selalu nyala, tidak bisa di-mute dari UI, dan langsung dicoba
@@ -77,15 +114,31 @@ function clearBtnLoading(btnEl) {
   btnEl.classList.remove('is-loading');
 }
 
-// ---------- LOGIN ----------
+// ---------- LOGIN (NIP + Alias jadi satu langkah) ----------
 document.getElementById('btn-login').addEventListener('click', async () => {
-  const nip5 = document.getElementById('input-nip').value.trim();
+  const kode = document.getElementById('input-nip').value.trim();
+  const alias = document.getElementById('input-alias').value.trim();
   const errorEl = document.getElementById('login-error');
   const btnLogin = document.getElementById('btn-login');
   errorEl.textContent = '';
 
-  if (nip5.length !== 5) {
-    errorEl.textContent = 'Masukkan tepat 5 digit terakhir NIP Lama/NIM.';
+  if (!/^\d+$/.test(kode)) {
+    errorEl.textContent = 'Kode hanya boleh berisi angka.';
+    return;
+  }
+  // Pegawai: 5 digit terakhir NIP. Mahasiswa magang: NIM lengkap (9-18 digit).
+  const isKodePegawai = kode.length === 5;
+  const isKodeMahasiswa = kode.length >= 9 && kode.length <= 18;
+  if (!isKodePegawai && !isKodeMahasiswa) {
+    errorEl.textContent = 'Masukkan 5 digit terakhir NIP (pegawai) atau NIM lengkap (mahasiswa).';
+    return;
+  }
+  if (!alias) {
+    errorEl.textContent = 'Nama samaran tidak boleh kosong.';
+    return;
+  }
+  if (alias.length < 3) {
+    errorEl.textContent = 'Nama samaran minimal 3 karakter.';
     return;
   }
 
@@ -93,7 +146,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
   setBtnLoading(btnLogin, '⏳ Memeriksa...');
 
   try {
-    const data = await apiPost('login', { nip5 });
+    const data = await apiPost('login', { kode, alias });
 
     if (data.error) {
       errorEl.textContent = data.error;
@@ -102,11 +155,10 @@ document.getElementById('btn-login').addEventListener('click', async () => {
 
     state.nip = data.nip;
     state.nama = data.nama;
+    state.alias = alias;
 
-    document.getElementById('alias-nama-asli').textContent = data.nama;
-    document.getElementById('input-alias').value = '';
-    document.getElementById('alias-error').textContent = '';
-    showView('alias');
+    setBtnLoading(btnLogin, '⏳ Menyiapkan soal...');
+    await startQuiz();
   } catch (err) {
     errorEl.textContent = 'Tidak bisa terhubung ke server.';
   } finally {
@@ -119,33 +171,6 @@ document.getElementById('btn-show-leaderboard').addEventListener('click', (e) =>
 document.getElementById('btn-back-home').addEventListener('click', () => showView('login'));
 document.getElementById('btn-to-leaderboard').addEventListener('click', (e) => loadLeaderboard(e.currentTarget));
 
-// ---------- ALIAS ----------
-document.getElementById('btn-start-quiz').addEventListener('click', async () => {
-  const alias = document.getElementById('input-alias').value.trim();
-  const errorEl = document.getElementById('alias-error');
-  const btnStart = document.getElementById('btn-start-quiz');
-
-  if (!alias) {
-    errorEl.textContent = 'Nama samaran tidak boleh kosong.';
-    return;
-  }
-  if (alias.length < 3) {
-    errorEl.textContent = 'Nama samaran minimal 3 karakter.';
-    return;
-  }
-
-  state.alias = alias;
-
-  btnStart.disabled = true;
-  setBtnLoading(btnStart, '⏳ Menyiapkan soal...');
-  try {
-    await startQuiz();
-  } finally {
-    btnStart.disabled = false;
-    clearBtnLoading(btnStart);
-  }
-});
-
 // ---------- QUIZ ----------
 async function startQuiz() {
   const data = await apiGet('soal');
@@ -153,11 +178,11 @@ async function startQuiz() {
   state.idx = 0;
   state.jawaban = {};
   state.terjawab = {};
-  state.waktuMulai = new Date().toISOString();
 
   document.getElementById('quiz-nama').textContent = state.nama;
   showView('quiz');
   renderSoal();
+  startTimer(); // mulai hitung dari saat soal pertama benar-benar tampil
 }
 
 function renderSoal() {
@@ -211,12 +236,17 @@ async function selectJawaban(soal, btnEl) {
 
   state.jawaban[soal.id] = nilaiPilihan;
 
+  // Jeda timer selama nunggu server, biar delay jaringan tidak mengurangi "waktu berpikir" peserta
+  pauseTimer();
+
   let hasil;
   try {
     hasil = await apiPost('jawab', { soalId: soal.id, jawaban: nilaiPilihan });
   } catch (err) {
     hasil = null;
   }
+
+  resumeTimer();
 
   container.classList.remove('checking');
   clearBtnLoading(btnEl);
@@ -259,6 +289,7 @@ document.getElementById('btn-next').addEventListener('click', async (e) => {
   } else {
     btnNext.disabled = true;
     setBtnLoading(btnNext, '⏳ Mengirim hasil...');
+    pauseTimer(); // waktu kirim ke server tidak dihitung
     try {
       await submitQuiz();
     } finally {
@@ -271,18 +302,22 @@ document.getElementById('btn-next').addEventListener('click', async (e) => {
 });
 
 async function submitQuiz() {
+  const durasiDetik = Math.round(getElapsedMs() / 1000);
+
   const data = await apiPost('submit', {
     nip: state.nip,
     alias: state.alias,
-    waktuMulai: state.waktuMulai,
+    durasiDetik,
     jawaban: state.jawaban,
   });
 
   if (data.error) {
+    resumeTimer(); // kuis lanjut lagi (misal alias ternyata baru saja kepakai orang lain), waktu jalan lagi
     alert(data.error);
     return;
   }
 
+  stopTimer();
   document.getElementById('result-score').textContent = `${data.nilai} / ${data.totalSoal}`;
   document.getElementById('result-durasi').textContent = `Waktu pengerjaan: ${data.durasiDetik} detik`;
   showView('result');

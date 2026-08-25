@@ -39,7 +39,7 @@ input[type=text] {
   padding: 14px;
   font-size: 1.3rem;
   text-align: center;
-  letter-spacing: 4px;
+  letter-spacing: 2px;
   border: 2px solid #ccc;
   border-radius: 10px;
   margin-bottom: 12px;
@@ -114,7 +114,9 @@ button.secondary { background: #e9ecef; color: #333; }
   60% { transform: translateX(-4px); }
   80% { transform: translateX(4px); }
 }
-.quiz-header { align-items: center; }
+.quiz-header { align-items: flex-start; }
+.quiz-header-left { display: flex; flex-direction: column; gap: 2px; }
+#quiz-timer { font-weight: 700; color: #0f5132; }
 .score { font-size: 3rem; font-weight: 800; color: #0f5132; text-align: center; margin: 12px 0; }
 table { width: 100%; border-collapse: collapse; margin-top: 12px; }
 th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }

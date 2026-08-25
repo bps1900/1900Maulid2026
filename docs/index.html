@@ -13,27 +13,23 @@
   <section id="view-login" class="card">
     <img src="images/logo.png" alt="Logo" class="logo-img">
     <h1 class="login-title">Kuis Memperingati Maulid Nabi Muhammad SAW<br>Tahun 2026</h1>
-    <p>Masukkan 5 digit terakhir NIP Lama bagi pegawai dan NIM untuk mahasiswa magang.</p>
-    <input id="input-nip" type="text" inputmode="numeric" maxlength="5" placeholder="Contoh: 12345">
+    <p>Masukkan 5 digit terakhir NIP bagi pegawai, atau NIM lengkap bagi mahasiswa magang.</p>
+    <input id="input-nip" type="text" inputmode="numeric" maxlength="18" placeholder="Contoh: 12345 (pegawai) / 3032311066 (mahasiswa)">
+    <p>Masukkan nama samaran/alias yang akan tampil di leaderboard.</p>
+    <input id="input-alias" type="text" maxlength="30" placeholder="Contoh: Elang Malam">
     <button id="btn-login">Mulai Kuis</button>
     <p id="login-error" class="error"></p>
     <hr>
     <button id="btn-show-leaderboard" class="secondary">Lihat Leaderboard</button>
   </section>
 
-  <!-- ALIAS -->
-  <section id="view-alias" class="card hidden">
-    <h1>👤 Nama Samaran</h1>
-    <p>Halo, <b id="alias-nama-asli"></b>. Masukkan nama samaran/alias yang akan tampil di leaderboard.</p>
-    <input id="input-alias" type="text" maxlength="30" placeholder="Contoh: Elang Malam">
-    <button id="btn-start-quiz">Mulai Kuis</button>
-    <p id="alias-error" class="error"></p>
-  </section>
-
   <!-- QUIZ -->
   <section id="view-quiz" class="card hidden">
     <div class="quiz-header">
-      <span id="quiz-progress">Soal 1 / 40</span>
+      <div class="quiz-header-left">
+        <span id="quiz-progress">Soal 1 / 40</span>
+        <span id="quiz-timer">⏱ 0s</span>
+      </div>
       <span id="quiz-nama"></span>
     </div>
     <div id="soal-container"></div>
