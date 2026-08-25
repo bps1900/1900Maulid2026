@@ -245,18 +245,21 @@ async function selectJawaban(soal, btnEl) {
     hasil = null;
   }
 
-  resumeTimer();
-
   container.classList.remove('checking');
   clearBtnLoading(btnEl);
 
   if (!hasil || hasil.error) {
-    // Kalau gagal cek ke server, tetap lanjut tanpa efek supaya kuis tidak macet
+    // Kalau gagal cek ke server, tetap lanjut tanpa efek supaya kuis tidak macet.
+    // Timer dilanjutkan lagi karena peserta masih harus mencoba menjawab soal ini.
+    resumeTimer();
     container.querySelectorAll('.opsi-btn').forEach(b => (b.disabled = false));
     document.getElementById('btn-next').disabled = false;
     return;
   }
 
+  // Jawaban sudah dicek (benar/salah). Timer TETAP dijeda selama peserta melihat
+  // feedback dan mikir sebelum klik "Selanjutnya" — baru jalan lagi saat soal
+  // berikutnya benar-benar tampil (lihat renderSoal / handler btn-next).
   state.terjawab[soal.id] = hasil;
   applyFeedbackStyle(container, soal, nilaiPilihan, hasil);
   document.getElementById('btn-next').disabled = false;
@@ -285,6 +288,7 @@ document.getElementById('btn-next').addEventListener('click', async (e) => {
   if (state.idx < state.soal.length - 1) {
     state.idx += 1;
     renderSoal();
+    resumeTimer(); // waktu mulai jalan lagi persis saat soal berikutnya tampil
   } else {
     btnNext.disabled = true;
     setBtnLoading(btnNext, '⏳ Mengirim hasil...');
