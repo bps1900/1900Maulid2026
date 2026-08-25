@@ -28,48 +28,12 @@ let state = {
 };
 
 // ---------- MUSIK LATAR ----------
+// Musik selalu nyala, tidak bisa di-mute dari UI, dan langsung dicoba
+// diputar begitu halaman selesai dimuat.
 const bgMusic = document.getElementById('bg-music');
-const btnMute = document.getElementById('btn-mute');
-let musicMuted = false;
-
-// Simpan status musik (posisi & mute) supaya bisa lanjut lagi setelah reload
-// (mis. saat user menekan Ctrl+Shift+R / hard refresh, yang selalu memuat ulang
-// seluruh halaman dari nol -- ini perilaku bawaan browser dan tidak bisa dicegah
-// oleh JS, tapi kita bisa membuatnya *terasa* nyambung dengan menyimpan posisinya).
-const MUSIC_KEY = 'kuisMaulidMusicState';
-
-function saveMusicState() {
-  try {
-    sessionStorage.setItem(MUSIC_KEY, JSON.stringify({
-      time: bgMusic.currentTime,
-      muted: musicMuted,
-    }));
-  } catch (e) {}
-}
-
-btnMute.addEventListener('click', () => {
-  musicMuted = !musicMuted;
-  bgMusic.muted = musicMuted;
-  btnMute.textContent = musicMuted ? '🔇' : '🔊';
-  saveMusicState();
-});
 
 function playBgMusic() {
   bgMusic.volume = 0.35;
-
-  // Pulihkan posisi & status mute dari sesi sebelumnya (kalau ada)
-  try {
-    const saved = JSON.parse(sessionStorage.getItem(MUSIC_KEY));
-    if (saved) {
-      if (typeof saved.time === 'number' && isFinite(saved.time)) {
-        bgMusic.currentTime = saved.time;
-      }
-      musicMuted = !!saved.muted;
-      bgMusic.muted = musicMuted;
-      btnMute.textContent = musicMuted ? '🔇' : '🔊';
-    }
-  } catch (e) {}
-
   bgMusic.play().catch(() => {
     // Kebanyakan browser blokir autoplay bersuara sebelum ada interaksi user.
     // Begitu ada klik/tap pertama di halaman manapun, coba mainkan lagi.
@@ -81,18 +45,7 @@ function playBgMusic() {
   });
 }
 
-function stopBgMusic() {
-  bgMusic.pause();
-  bgMusic.currentTime = 0;
-  try { sessionStorage.removeItem(MUSIC_KEY); } catch (e) {}
-}
-
-// Simpan posisi musik secara berkala & sesaat sebelum halaman ditinggalkan/reload
-setInterval(saveMusicState, 2000);
-window.addEventListener('pagehide', saveMusicState);
-window.addEventListener('beforeunload', saveMusicState);
-
-// Coba nyalakan musik segera setelah halaman selesai dimuat
+// Nyalakan musik segera setelah halaman selesai dimuat
 window.addEventListener('DOMContentLoaded', playBgMusic);
 
 const view = {
@@ -205,7 +158,6 @@ async function startQuiz() {
   document.getElementById('quiz-nama').textContent = state.nama;
   showView('quiz');
   renderSoal();
-  playBgMusic();
 }
 
 function renderSoal() {
@@ -333,7 +285,6 @@ async function submitQuiz() {
 
   document.getElementById('result-score').textContent = `${data.nilai} / ${data.totalSoal}`;
   document.getElementById('result-durasi').textContent = `Waktu pengerjaan: ${data.durasiDetik} detik`;
-  stopBgMusic();
   showView('result');
 }
 
