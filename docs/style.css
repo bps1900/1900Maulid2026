@@ -19,46 +19,47 @@ body {
 .card {
   background: #fff;
   border-radius: 16px;
-  padding: 28px 24px;
+  padding: 22px 22px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 .hidden { display: none; }
-h1 { margin-top: 0; font-size: 1.25rem; color: #0f5132; text-align: center; line-height: 1.4; }
-.login-title { font-size: 1.05rem; white-space: normal; }
+h1 { margin-top: 0; margin-bottom: 10px; font-size: 1.05rem; color: #0f5132; text-align: center; line-height: 1.35; }
+.login-title { font-size: 0.95rem; white-space: normal; }
 .logo-img {
   display: block;
-  width: 55%;
-  max-width: 240px;
+  width: 45%;
+  max-width: 190px;
   height: auto;
-  margin: 0 auto 16px;
+  margin: 0 auto 10px;
 }
-h2 { color: #0f5132; }
-p { color: #444; line-height: 1.5; }
+h2 { color: #0f5132; margin-bottom: 8px; }
+p { color: #444; line-height: 1.35; font-size: 0.85rem; margin: 0 0 8px; }
 input[type=text] {
   width: 100%;
-  padding: 14px;
-  font-size: 1.3rem;
+  padding: 10px;
+  font-size: 1.05rem;
   text-align: center;
   letter-spacing: 2px;
   border: 2px solid #ccc;
   border-radius: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 button {
   width: 100%;
-  padding: 14px;
-  font-size: 1rem;
+  padding: 11px;
+  font-size: 0.9rem;
   font-weight: 600;
   border: none;
   border-radius: 10px;
   background: #0f5132;
   color: #fff;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 button.secondary { background: #e9ecef; color: #333; }
-.error { color: #c0392b; font-weight: 600; min-height: 20px; }
+.error { color: #c0392b; font-weight: 600; font-size: 0.8rem; min-height: 14px; margin: 0 0 4px; }
+hr { margin: 14px 0; border: none; border-top: 1px solid #eee; }
 .quiz-header {
   display: flex;
   justify-content: space-between;
@@ -124,24 +125,24 @@ tbody tr:first-child { background: #fff8e1; font-weight: 700; }
 
 /* ---------- RESPONSIVE (HP / layar sempit) ---------- */
 @media (max-width: 480px) {
-  body { padding: 12px; align-items: flex-start; padding-top: 56px; }
-  .card { padding: 22px 18px; border-radius: 14px; }
-  .logo-img { width: 60%; max-width: 180px; margin-bottom: 12px; }
-  h1 { font-size: 1.15rem; }
-  .login-title { font-size: 1rem; }
-  p { font-size: 0.9rem; }
-  input[type=text] { padding: 12px; font-size: 1.15rem; letter-spacing: 3px; }
-  button { padding: 12px; font-size: 0.95rem; }
-  .soal-text { font-size: 1rem; }
-  .opsi-btn { padding: 10px 14px; font-size: 0.9rem; }
-  .score { font-size: 2.4rem; }
-  th, td { padding: 8px 6px; font-size: 0.8rem; }
+  body { padding: 10px; align-items: flex-start; padding-top: 40px; }
+  .card { padding: 18px 16px; border-radius: 14px; }
+  .logo-img { width: 45%; max-width: 150px; margin-bottom: 8px; }
+  h1 { font-size: 0.95rem; }
+  .login-title { font-size: 0.88rem; }
+  p { font-size: 0.8rem; }
+  input[type=text] { padding: 9px; font-size: 0.95rem; letter-spacing: 2px; }
+  button { padding: 10px; font-size: 0.85rem; }
+  .soal-text { font-size: 0.95rem; }
+  .opsi-btn { padding: 9px 12px; font-size: 0.85rem; }
+  .score { font-size: 2.2rem; }
+  th, td { padding: 7px 5px; font-size: 0.75rem; }
 }
 
 @media (max-width: 360px) {
-  .card { padding: 18px 14px; }
-  .login-title { font-size: 0.9rem; }
-  .logo-img { width: 65%; max-width: 150px; }
+  .card { padding: 16px 12px; }
+  .login-title { font-size: 0.82rem; }
+  .logo-img { width: 50%; max-width: 130px; }
 }
 
 /* ---------- Efek visual saat loading/nunggu server ---------- */
