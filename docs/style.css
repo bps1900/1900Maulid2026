@@ -2,7 +2,13 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #0f5132, #146c43);
+  background-color: #0f5132; /* fallback kalau gambar belum/gagal load */
+  background-image:
+    linear-gradient(135deg, rgba(15,81,50,0.55), rgba(20,108,67,0.55)),
+    url('images/latar.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   min-height: 100vh;
   display: flex;
   align-items: center;
