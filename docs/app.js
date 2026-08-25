@@ -132,7 +132,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
   errorEl.textContent = '';
 
   if (nip5.length !== 5) {
-    errorEl.textContent = 'Masukkan tepat 5 digit NIP.';
+    errorEl.textContent = 'Masukkan tepat 5 digit terakhir NIP Lama/NIM.';
     return;
   }
 
