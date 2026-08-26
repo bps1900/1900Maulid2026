@@ -113,6 +113,13 @@ function clearBtnLoading(btnEl) {
   btnEl.classList.remove('is-loading');
 }
 
+// ---------- RESET FORM LOGIN ----------
+function resetLoginForm() {
+  document.getElementById('input-nip').value = '';
+  document.getElementById('input-alias').value = '';
+  document.getElementById('login-error').textContent = '';
+}
+
 // ---------- LOGIN (NIP + Alias jadi satu langkah) ----------
 document.getElementById('btn-login').addEventListener('click', async () => {
   const kode = document.getElementById('input-nip').value.trim();
@@ -167,7 +174,10 @@ document.getElementById('btn-login').addEventListener('click', async () => {
 });
 
 document.getElementById('btn-show-leaderboard').addEventListener('click', (e) => loadLeaderboard(e.currentTarget));
-document.getElementById('btn-back-home').addEventListener('click', () => showView('login'));
+document.getElementById('btn-back-home').addEventListener('click', () => {
+  resetLoginForm();
+  showView('login');
+});
 document.getElementById('btn-to-leaderboard').addEventListener('click', (e) => loadLeaderboard(e.currentTarget));
 
 // ---------- QUIZ ----------
